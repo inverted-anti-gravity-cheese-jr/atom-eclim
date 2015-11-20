@@ -57,7 +57,15 @@ module.exports = MyPackage =
       if fileName.indexOf('/') == 0
         fileName = fileName.substring(1, fileName.length)
       posInText = atom.workspace.getActiveTextEditor().getTextInBufferRange([new Range(0,0), end]).length
-      command = eclimLocation + " -command java_complete -p " + projectName + ' -f ' + fileName + ' -o ' + posInText.toString() + ' -e utf-8 -l compact'
+      # command = eclimLocation + " -command java_complete -p " + projectName + ' -f ' + fileName + ' -o ' + posInText.toString() + ' -e utf-8 -l compact'
+      # console.log(command)
+      #
+      # exec = require("child_process").exec
+      # exec(command, (error, stdout, stderr) ->
+      #   console.log(stdout)
+      # )
+
+      command = eclimLocation + " -command java_import_organize -p " + projectName + ' -f ' + fileName + ' -o ' + posInText.toString() + ' -e utf-8'
       console.log(command)
 
       exec = require("child_process").exec
