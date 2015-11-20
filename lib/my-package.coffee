@@ -13,6 +13,21 @@ module.exports = MyPackage =
   activate: (state) ->
     eclimLocation = 'D:\\offspin\\eclipsewithgradle\\eclipse\\eclim'
 
+    projCommand = eclimLocation + ' -command project_list'
+    exec = require("child_process").exec
+    if(projectName == "")
+      exec(projCommand, (error, stdout, stderr) ->
+        list = JSON.parse(stdout)
+        iter = (elem) ->
+          elemPath = elem.path.replace(/\\/g, "/")
+          editorPath = atom.workspace.getActiveTextEditor().getPath().replace(/\\/g, "/")
+          if editorPath.indexOf(elemPath) > -1 && elem.path.length > projectPath.length
+            projectName = elem.name
+            projectPath = elem.path
+        iter elem for elem in list
+        console.log(projectName)
+      )
+
     @myPackageView = new MyPackageView(state.myPackageViewState, eclimLocation)
     @modalPanel = atom.workspace.addModalPanel(item: @myPackageView.getElement(), visible: false)
 
@@ -30,26 +45,21 @@ module.exports = MyPackage =
   serialize: ->
     myPackageViewState: @myPackageView.serialize()
 
+  myautocom: ->
+    command = eclimLocation + " -command java_complete -p " + projectName + ' -f ' + fileName + ' -o ' + posInText.toString() + ' -e utf-8 -l compact'
+    console.log(command)
+
+    exec = require("child_process").exec
+    exec(command, (error, stdout, stderr) ->
+      console.log(stdout)
+    )
+
+
   toggle: ->
     console.log('MyPackage was toggled!')
     end = atom.workspace.getActiveTextEditor().getCursorBufferPosition()
     console.log(end.row)
     console.log()
-
-    projCommand = eclimLocation + ' -command project_list'
-    exec = require("child_process").exec
-    if(projectName == "")
-      exec(projCommand, (error, stdout, stderr) ->
-        list = JSON.parse(stdout)
-        iter = (elem) ->
-          elemPath = elem.path.replace(/\\/g, "/")
-          editorPath = atom.workspace.getActiveTextEditor().getPath().replace(/\\/g, "/")
-          if editorPath.indexOf(elemPath) > -1 && elem.path.length > projectPath.length
-            projectName = elem.name
-            projectPath = elem.path
-        iter elem for elem in list
-        console.log(projectName)
-      )
 
     if(projectName != "")
       console.log(projectName + " " + projectPath)
@@ -57,13 +67,6 @@ module.exports = MyPackage =
       if fileName.indexOf('/') == 0
         fileName = fileName.substring(1, fileName.length)
       posInText = atom.workspace.getActiveTextEditor().getTextInBufferRange([new Range(0,0), end]).length
-      # command = eclimLocation + " -command java_complete -p " + projectName + ' -f ' + fileName + ' -o ' + posInText.toString() + ' -e utf-8 -l compact'
-      # console.log(command)
-      #
-      # exec = require("child_process").exec
-      # exec(command, (error, stdout, stderr) ->
-      #   console.log(stdout)
-      # )
 
       command = eclimLocation + " -command java_import_organize -p " + projectName + ' -f ' + fileName + ' -o ' + posInText.toString() + ' -e utf-8'
       console.log(command)
