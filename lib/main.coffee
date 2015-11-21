@@ -4,11 +4,11 @@ provider = require './provider'
 eclimLocation = ''
 projectsPaths = new Object()
 
-module.exports = EclimMain =
+module.exports = eclimMain =
   selector: '.source.java'
 
   activate: (state) ->
-    provider.constructor()
+    provider.constructor(projectsPaths, @)
     eclimLocation = '/home/wojtek/Pobrane/eclipse/eclim'
     @loadEclipseProject(() -> )
 
@@ -49,6 +49,10 @@ module.exports = EclimMain =
 
   serialize: ->
 
+  getFileName: -> atom.workspace.getActiveTextEditor().getPath().replace(/\\/g, "/")
+
+  getEclimLocation: -> eclimLocation
+
   build: ->
     # if(projectName == "")
     #   loadEclipseProject();
@@ -62,20 +66,20 @@ module.exports = EclimMain =
 
   toggle: ->
     callback = () ->
-      fileName = atom.workspace.getActiveTextEditor().getPath().replace(/\\/g, "/")
+      fileName = getFileName()
 
       if(projectsPaths[fileName] != "not_in_project")
         tmpPaths = projectsPaths[fileName]
         projectPath = tmpPaths["path"]
         projectName = tmpPaths["name"]
-        fileName = atom.workspace.getActiveTextEditor().getPath().replace(/\\/g, "/").replace(projectPath, '')
-        if fileName.indexOf('/') == 0
-          fileName = fileName.substring(1, fileName.length)
+        cFileName = fileName.replace(projectPath, '')
+        if cFileName.indexOf('/') == 0
+          cFileName = cFileName.substring(1, cFileName.length)
         end = atom.workspace.getActiveTextEditor().getCursorBufferPosition()
         posInText = atom.workspace.getActiveTextEditor().getTextInBufferRange([new Range(0,0), end]).length
 
-        command = eclimLocation + " -command java_import_organize -p " + projectName + ' -f ' + fileName + ' -o ' + posInText.toString() + ' -e utf-8'
-
+        command = eclimLocation + " -command java_import_organize -p " + projectName + ' -f ' + cFileName + ' -o ' + posInText.toString() + ' -e utf-8'
+        atom.workspace.getActiveTextEditor().save()
         exec = require("child_process").exec
         exec(command)
     @loadEclipseProject(callback)
