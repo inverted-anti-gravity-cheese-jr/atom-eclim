@@ -1,0 +1,27 @@
+# See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
+'context-menu':
+  'atom-text-editor': [
+    {
+      'label': 'Toggle my-package'
+      'command': 'atom-eclim:toggle'
+    },
+    {
+      'label': 'Build my-package'
+      'command': 'atom-eclim:build'
+    }
+  ]
+'menu': [
+  {
+    'label': 'Java'
+    'submenu': [
+      {
+        'label': 'Toggle'
+        'command': 'atom-eclim:toggle'
+      },
+      {
+        'label': 'Build'
+        'command': 'atom-eclim:build'
+      }
+    ]
+  }
+]

@@ -7,9 +7,5 @@
 
 # For more detailed documentation see
 # https://atom.io/docs/latest/behind-atom-keymaps-in-depth
-'.workspace':
-  'ctrl-alt-o': 'my-package:toggle'
-  'ctrl-space': 'my-package:myautocom'
-
-'.workspace .editor:not(.mini)':
-  'ctrl-space': 'my-package:myautocom'
+'atom-text-editor':
+  'ctrl-alt-o': 'atom-eclim:toggle'

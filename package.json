@@ -1,14 +1,17 @@
 {
-  "name": "my-package",
-  "main": "./lib/my-package",
+  "name": "atom-eclim",
+  "main": "./lib/main",
   "version": "0.0.0",
-  "description": "A short description of your package",
-  "keywords": [
-  ],
-  "activationCommands": {
-    "atom-workspace": "my-package:toggle"
+  "description": "Eclim integration for atom editor",
+  "keywords": ["eclipse", "eclim", "autocomplete", "import", "java", "autoimport", "atom"],
+  "providedServices": {
+    "autocomplete.provider": {
+      "versions": {
+        "2.0.0": "getProvider"
+      }
+    }
   },
-  "repository": "https://github.com/atom/my-package",
+  "repository": "https://github.com/inverted-anti-gravity-cheese-jr/atom-eclim",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
