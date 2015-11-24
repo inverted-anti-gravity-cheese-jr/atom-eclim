@@ -9,7 +9,7 @@ module.exports = eclimMain =
 
   activate: (state) ->
     provider.constructor(projectsPaths, @)
-    eclimLocation = '/home/wojtek/Pobrane/eclipse/eclim'
+    eclimLocation = 'D:/offspin/eclipsewithgradle/eclipse/eclim'
     @loadEclipseProject(() -> )
 
     @subscriptions = new CompositeDisposable
@@ -22,8 +22,9 @@ module.exports = eclimMain =
     if(typeof(projectsPaths[fileName]) == "undefined")
       projCommand = eclimLocation + ' -command project_list'
       exec = require("child_process").exec
-      fileName = atom.workspace.getActiveTextEditor().getPath().replace(/\\/g, "/")
+      fileName = @getFileName()
       exec(projCommand, (error, stdout, stderr) ->
+        console.log stdout
         list = JSON.parse(stdout)
         tmpProjectPaths = {"name": "", "path": ""}
         iter = (elem) ->
@@ -65,9 +66,8 @@ module.exports = eclimMain =
     # )
 
   toggle: ->
+    fileName = @getFileName()
     callback = () ->
-      fileName = getFileName()
-
       if(projectsPaths[fileName] != "not_in_project")
         tmpPaths = projectsPaths[fileName]
         projectPath = tmpPaths["path"]

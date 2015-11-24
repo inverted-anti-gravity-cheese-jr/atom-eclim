@@ -15,6 +15,7 @@ module.exports = eclimProvider =
     eclimMain = @eclimMain
     projectsPaths = @projectsPaths
     waitingResolve = null
+    console.log projectsPaths
     callback = () ->
       resGlobal = new Array()
       fileName = eclimMain.getFileName()
@@ -34,7 +35,9 @@ module.exports = eclimProvider =
 
         atom.workspace.getActiveTextEditor().save()
         exec = require("child_process").exec
+        console.log(command)
         exec(command, (error, stdout, stderr) ->
+          console.log (stdout)
           completions = JSON.parse(stdout).completions
           parser = new CompletionsParser()
           for i in [0..completions.length] by 1
