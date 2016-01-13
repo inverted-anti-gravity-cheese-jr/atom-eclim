@@ -15,8 +15,11 @@ module.exports = eclimProvider =
     eclimMain = @eclimMain
     projectsPaths = @projectsPaths
     waitingResolve = null
-    console.log projectsPaths
-    callback = () ->
+    callback = (resolve) ->
+      resolve([{
+        text: 'asyncProvided',
+        rightLabel: 'asyncProvided'
+      }])
       resGlobal = new Array()
       fileName = eclimMain.getFileName()
       if(projectsPaths[fileName] != "not_in_project")
@@ -35,24 +38,38 @@ module.exports = eclimProvider =
 
         atom.workspace.getActiveTextEditor().save()
         exec = require("child_process").exec
-        console.log(command)
         exec(command, (error, stdout, stderr) ->
-          console.log (stdout)
           completions = JSON.parse(stdout).completions
           parser = new CompletionsParser()
           for i in [0..completions.length] by 1
             res = parser.parse(completions[i])
             if(res != null)
               resGlobal.push(res)
-          if typeof(waitingResolve) == 'function'
-            console.log resGlobal
-            waitingResolve(resGlobal) # NOT WORKING
+          if typeof(resolve) == 'function'
+            resolve(resGlobal)
         )
-    eclimMain.loadEclipseProject(callback);
-    return new Promise (resolve) =>
-      waitingResolve = resolve
+    #return new Promise (resolve) =>
+    #  waitingResolve = resolve
+    #  # check and reload Eclipse projects
+    #  eclimMain.loadEclipseProject(callback)
+
+    return new Promise((resolve) ->
+      # working somehow
+      setTimeout ->
+        rep = new Array()
+        rep.push({
+          text: 'asyncProvided',
+          rightLabel: 'asyncProvided'
+        })
+        resolve(rep)
+      , 500
+      # not working somehow
+      #eclimMain.loadEclipseProject(callback, resolve)
+      )
 
   onDidInsertSuggestion: ({editor, triggerPosition, suggestion}) ->
+    console.log "Did insert"
+    console.log suggestion
 
   dispose: ->
 

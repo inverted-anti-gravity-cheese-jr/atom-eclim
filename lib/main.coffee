@@ -18,13 +18,12 @@ module.exports = eclimMain =
     @subscriptions.add atom.commands.add 'atom-text-editor','atom-eclim:toggle': => @toggle()
     @subscriptions.add atom.commands.add 'atom-text-editor','atom-eclim:build': => @build()
 
-  loadEclipseProject: (callback) ->
+  loadEclipseProject: (callback, param) ->
     if(typeof(projectsPaths[fileName]) == "undefined")
       projCommand = eclimLocation + ' -command project_list'
       exec = require("child_process").exec
       fileName = @getFileName()
       exec(projCommand, (error, stdout, stderr) ->
-        console.log stdout
         list = JSON.parse(stdout)
         tmpProjectPaths = {"name": "", "path": ""}
         iter = (elem) ->
@@ -37,10 +36,11 @@ module.exports = eclimMain =
           projectsPaths[fileName] = tmpProjectPaths
         else
           projectsPaths[fileName] = "not_in_project"
-        callback()
+        callback(param)
       )
     else
-      callback()
+      console.log "Already in project"
+      callback(param)
 
   deactivate: ->
     provider.dispose()
@@ -67,7 +67,7 @@ module.exports = eclimMain =
 
   toggle: ->
     fileName = @getFileName()
-    callback = () ->
+    callback = (param) ->
       if(projectsPaths[fileName] != "not_in_project")
         tmpPaths = projectsPaths[fileName]
         projectPath = tmpPaths["path"]
